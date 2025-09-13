@@ -1,0 +1,26 @@
+{
+  "name": "hrms-microservices",
+  "version": "1.0.0",
+  "description": "HRMS Microservices Architecture",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:auth\" \"npm run dev:employee\" \"npm run dev:leave\" \"npm run dev:payroll\" \"npm run dev:notification\" \"npm run dev:gateway\"",
+    "dev:auth": "cd auth-service && npm run dev",
+    "dev:employee": "cd employee-service && npm run dev",
+    "dev:leave": "cd leave-service && npm run dev",
+    "dev:payroll": "cd payroll-service && npm run dev",
+    "dev:notification": "cd notification-service && npm run dev",
+    "dev:gateway": "cd api-gateway && npm run dev",
+    "start:all": "docker-compose up -d",
+    "stop:all": "docker-compose down",
+    "install:all": "npm run install:auth && npm run install:employee && npm run install:leave && npm run install:payroll && npm run install:notification && npm run install:gateway",
+    "install:auth": "cd auth-service && npm install",
+    "install:employee": "cd employee-service && npm install",
+    "install:leave": "cd leave-service && npm install",
+    "install:payroll": "cd payroll-service && npm install",
+    "install:notification": "cd notification-service && npm install",
+    "install:gateway": "cd api-gateway && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

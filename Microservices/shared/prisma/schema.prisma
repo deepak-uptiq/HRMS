@@ -1,0 +1,300 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  role      UserRole @default(EMPLOYEE)
+  isActive  Boolean  @default(true)
+  approvalStatus ApprovalStatus @default(PENDING)
+  requestedRole  UserRole?
+  approvedBy     String?
+  approvedAt     DateTime?
+  rejectionReason String?
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relations
+  employee  Employee?
+  auditLogs AuditLog[]
+  announcements Announcement[]
+  performanceReviews PerformanceReview[]
+  
+  @@map("users")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String?
+  oldValues Json?
+  newValues Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  
+  // Foreign Keys
+  userId    String
+  
+  // Relations
+  user      User @relation(fields: [userId], references: [id])
+  
+  @@map("audit_logs")
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  address     String?
+  phone       String?
+  email       String?
+  website     String?
+  logo        String?
+  settings    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("companies")
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  type        AnnouncementType @default(GENERAL)
+  priority    Priority @default(NORMAL)
+  isActive    Boolean  @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Foreign Keys
+  createdBy   String
+  
+  // Relations
+  createdByUser User @relation(fields: [createdBy], references: [id])
+  
+  @@map("announcements")
+}
+
+model Payslip {
+  id            String   @id @default(cuid())
+  month         Int
+  year          Int
+  basicSalary   Float
+  allowances    Float    @default(0)
+  deductions    Float    @default(0)
+  netSalary     Float
+  status        PayslipStatus @default(PENDING)
+  generatedAt   DateTime @default(now())
+  paidAt        DateTime?
+  
+  // Foreign Keys
+  employeeId    String
+  
+  // Relations
+  employee      Employee @relation(fields: [employeeId], references: [id])
+  
+  @@map("payslips")
+}
+
+model PerformanceReview {
+  id            String   @id @default(cuid())
+  period        String
+  goals         Json?
+  achievements  Json?
+  rating        Float?
+  comments      String?
+  status        ReviewStatus @default(PENDING)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Foreign Keys
+  employeeId    String
+  reviewedBy    String?
+  
+  // Relations
+  employee      Employee @relation(fields: [employeeId], references: [id])
+  reviewer      User?    @relation(fields: [reviewedBy], references: [id])
+  
+  @@map("performance_reviews")
+}
+
+
+enum UserRole {
+  ADMIN
+  HR
+  EMPLOYEE
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AnnouncementType {
+  GENERAL
+  URGENT
+  POLICY
+  EVENT
+}
+
+enum Priority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum PayslipStatus {
+  PENDING
+  GENERATED
+  PAID
+  CANCELLED
+}
+
+enum ReviewStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+
+
+model Department {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  employees   Employee[]
+  
+  @@map("departments")
+}
+
+model Position {
+  id          String   @id @default(cuid())
+  title       String   @unique
+  description String?
+  level       Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  employees   Employee[]
+  
+  @@map("positions")
+}
+
+model Employee {
+  id           String   @id @default(cuid())
+  employeeId   String   @unique
+  firstName    String
+  lastName     String
+  email        String   @unique
+  phone        String?
+  address      String?
+  dateOfBirth  DateTime?
+  hireDate     DateTime @default(now())
+  salary       Float?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  // Foreign Keys
+  departmentId String
+  positionId   String
+  userId       String?  @unique
+  
+  // Relations
+  department   Department @relation(fields: [departmentId], references: [id])
+  position     Position   @relation(fields: [positionId], references: [id])
+  user         User?      @relation(fields: [userId], references: [id])
+  leaves       Leave[]
+  attendances  Attendance[]
+  payslips     Payslip[]
+  performanceReviews PerformanceReview[]
+  
+  @@map("employees")
+}
+
+model Leave {
+  id          String      @id @default(cuid())
+  type        LeaveType
+  startDate   DateTime
+  endDate     DateTime
+  reason      String?
+  status      LeaveStatus @default(PENDING)
+  approvedBy  String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  
+  // Foreign Keys
+  employeeId  String
+  
+  // Relations
+  employee    Employee @relation(fields: [employeeId], references: [id])
+  
+  @@map("leaves")
+}
+
+model Attendance {
+  id         String   @id @default(cuid())
+  date       DateTime @default(now())
+  checkIn    DateTime?
+  checkOut   DateTime?
+  hoursWorked Float?
+  status     AttendanceStatus @default(PRESENT)
+  notes      String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  // Foreign Keys
+  employeeId String
+  
+  // Relations
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  
+  @@map("attendances")
+}
+
+enum LeaveType {
+  SICK
+  VACATION
+  PERSONAL
+  MATERNITY
+  PATERNITY
+  EMERGENCY
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  HALF_DAY
+}

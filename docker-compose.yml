@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: hrdeep
+      POSTGRES_PASSWORD: deepakmore
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hrdeep -d mydb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend
+  backend:
+    build: ./Backend
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+      - NODE_ENV=production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./Backend/logs:/app/logs
+
+  # Frontend
+  frontend:
+    build: ./Frontend/HRMS
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

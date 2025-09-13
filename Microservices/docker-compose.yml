@@ -1,0 +1,89 @@
+version: '3.8'
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: hrdeep
+      POSTGRES_PASSWORD: deepakmore
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:3001
+      - EMPLOYEE_SERVICE_URL=http://employee-service:3002
+      - LEAVE_SERVICE_URL=http://leave-service:3003
+      - PAYROLL_SERVICE_URL=http://payroll-service:3004
+      - NOTIFICATION_SERVICE_URL=http://notification-service:3005
+    depends_on:
+      - auth-service
+      - employee-service
+      - leave-service
+      - payroll-service
+      - notification-service
+
+  # Auth Service
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+    depends_on:
+      - postgres
+
+  # Employee Service
+  employee-service:
+    build: ./employee-service
+    ports:
+      - "3002:3002"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+    depends_on:
+      - postgres
+
+  # Leave Service
+  leave-service:
+    build: ./leave-service
+    ports:
+      - "3003:3003"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+    depends_on:
+      - postgres
+
+  # Payroll Service
+  payroll-service:
+    build: ./payroll-service
+    ports:
+      - "3004:3004"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+    depends_on:
+      - postgres
+
+  # Notification Service
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "3005:3005"
+    environment:
+      - DATABASE_URL=postgresql://hrdeep:deepakmore@postgres:5432/mydb
+      - JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
