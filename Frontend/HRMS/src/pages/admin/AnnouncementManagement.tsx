@@ -5,8 +5,8 @@ type Announcement = {
   id: string
   title: string
   content: string
-  type: 'INFO' | 'WARNING' | 'URGENT'
-  priority: 'LOW' | 'MEDIUM' | 'HIGH'
+  type: 'GENERAL' | 'URGENT' | 'POLICY' | 'EVENT'
+  priority: 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT'
   isActive: boolean
   endDate?: string
   createdAt: string
@@ -23,8 +23,8 @@ export default function AnnouncementManagement() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    type: 'INFO' as 'INFO' | 'WARNING' | 'URGENT',
-    priority: 'MEDIUM' as 'LOW' | 'MEDIUM' | 'HIGH',
+    type: 'GENERAL' as 'GENERAL' | 'URGENT' | 'POLICY' | 'EVENT',
+    priority: 'NORMAL' as 'LOW' | 'NORMAL' | 'HIGH' | 'URGENT',
     endDate: ''
   })
   const [loading, setLoading] = useState(true)
@@ -115,8 +115,8 @@ export default function AnnouncementManagement() {
     setFormData({
       title: '',
       content: '',
-      type: 'INFO',
-      priority: 'MEDIUM',
+      type: 'GENERAL',
+      priority: 'NORMAL',
       endDate: ''
     })
     setShowForm(false)
@@ -131,8 +131,9 @@ export default function AnnouncementManagement() {
 
   function getTypeColor(type: string) {
     switch (type) {
-      case 'INFO': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'WARNING': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      case 'GENERAL': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'POLICY': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      case 'EVENT': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       case 'URGENT': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
     }
@@ -140,8 +141,9 @@ export default function AnnouncementManagement() {
 
   function getPriorityColor(priority: string) {
     switch (priority) {
+      case 'URGENT': return 'bg-red-200 text-red-900 dark:bg-red-800 dark:text-red-100'
       case 'HIGH': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      case 'MEDIUM': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      case 'NORMAL': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       case 'LOW': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
     }
@@ -227,8 +229,9 @@ export default function AnnouncementManagement() {
                   onChange={handleChange}
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
-                  <option value="INFO">Info</option>
-                  <option value="WARNING">Warning</option>
+                  <option value="GENERAL">General</option>
+                  <option value="POLICY">Policy</option>
+                  <option value="EVENT">Event</option>
                   <option value="URGENT">Urgent</option>
                 </select>
               </div>
@@ -244,8 +247,9 @@ export default function AnnouncementManagement() {
                   className="w-full rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 >
                   <option value="LOW">Low</option>
-                  <option value="MEDIUM">Medium</option>
+                  <option value="NORMAL">Normal</option>
                   <option value="HIGH">High</option>
+                  <option value="URGENT">Urgent</option>
                 </select>
               </div>
 
