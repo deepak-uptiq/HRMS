@@ -307,24 +307,9 @@ PORT=5000
 **Frontend**
 - API URL configuration in `src/config/env.ts`
 
-## 🏗️ Architecture Decision
+## 🏗️ Architecture
 
-### Why Monolithic Backend?
-
-Initially, we attempted to implement a microservices architecture with separate services for authentication, employee management, leave management, payroll, and notifications. However, we encountered several integration challenges:
-
-- **Service Communication Issues**: Complex inter-service communication and data consistency problems
-- **Development Complexity**: Increased complexity in local development and debugging
-- **Database Management**: Multiple database instances and data synchronization issues
-- **Deployment Overhead**: More complex deployment and monitoring requirements
-
-**Decision**: Reverted to a monolithic backend architecture for better:
-- **Development Speed**: Easier to develop, test, and debug
-- **Data Consistency**: Single database ensures ACID properties
-- **Simplified Deployment**: Single service to deploy and monitor
-- **Team Productivity**: Faster development cycles and easier maintenance
-
-The microservices folder is preserved for future reference and potential migration when the system scales significantly.
+The HRMS platform uses a monolithic backend architecture with a React frontend. The microservices folder is preserved for future reference.
 
 ## 🐳 Docker Deployment
 
@@ -353,7 +338,7 @@ cd Frontend/HRMS
 npm test
 ```
 
-## 📊 Database Schema
+##  Database Schema
 
 The database includes the following main entities:
 - **Users** - Authentication and user management
@@ -365,7 +350,7 @@ The database includes the following main entities:
 - **Performance Reviews** - Employee performance tracking
 - **Announcements** - Company announcements
 
-## 🤖 AI Features
+## 🤖AI Features
 
 The system includes a RAG (Retrieval-Augmented Generation) powered Q&A assistant that can answer questions about:
 - HR policies and procedures
@@ -374,7 +359,7 @@ The system includes a RAG (Retrieval-Augmented Generation) powered Q&A assistant
 - Company benefits
 - General HR queries
 
-## 🚀 Deployment
+##  Deployment
 
 ### Production Deployment
 1. Set up production environment variables
@@ -388,7 +373,7 @@ The system includes a RAG (Retrieval-Augmented Generation) powered Q&A assistant
 - **Staging**: Staging database, limited logging
 - **Production**: Production database, error logging only
 
-## 📝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -396,18 +381,18 @@ The system includes a RAG (Retrieval-Augmented Generation) powered Q&A assistant
 4. Add tests if applicable
 5. Submit a pull request
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
 
-## 🆘 Support
+##  Support
 
 For support and questions:
 - Check the API documentation
 - Review the code comments
 - Create an issue in the repository
 
-## 🔄 Version History
+## Version History
 
 - **v1.0.0** - Initial release with core HR functionality
 - **v1.1.0** - Added Docker support and microservices architecture
@@ -415,5 +400,3 @@ For support and questions:
 - **v1.3.0** - Enhanced UI/UX and performance improvements
 
 ---
-
-**Built with ❤️ for modern HR management**
